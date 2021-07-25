@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:shop/colors.dart';
 
 import '../providers/folders.dart';
 import '../widgets/folder_item.dart';
 import '../providers/auth.dart';
-
-import './splash_screen.dart';
-
 
 class FolderScreen extends StatefulWidget {
   @override
@@ -21,6 +19,7 @@ class _FolderScreenState extends State<FolderScreen> {
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return AlertDialog(
@@ -36,8 +35,8 @@ class _FolderScreenState extends State<FolderScreen> {
             ),
             actions: <Widget>[
               FlatButton(
-                color: Colors.red,
-                textColor: Colors.white,
+                color: Colors.white,
+                textColor: Colors.black,
                 child: Text('CANCEL'),
                 onPressed: () {
                   setState(() {
@@ -46,7 +45,7 @@ class _FolderScreenState extends State<FolderScreen> {
                 },
               ),
               FlatButton(
-                color: Colors.green,
+                color: appBarColor,
                 textColor: Colors.white,
                 child: Text('Create'),
                 onPressed: () {
@@ -115,58 +114,73 @@ class _FolderScreenState extends State<FolderScreen> {
     // final foldersP = Provider.of<Folders>(context);
     // final folders = foldersP.folders;
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Folders"),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.upload),
-              onPressed: () async {
-                var snackBar = await _connectivity(context);
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () async {
-                await _displayTextInputDialog(context);
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () async {
-                Provider.of<Auth>(context, listen: false).logout();
-              },
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: appBarColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
         ),
-        body: FutureBuilder(
-          future:
-              Provider.of<Folders>(context, listen: false).fetchAndSetPlaces(),
-          builder: (ctx, snapshot) =>
-              snapshot.connectionState == ConnectionState.waiting
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Consumer<Folders>(
-                      builder: (ctx, folders, ch) => folders.folders.length <= 0
-                          ? ch
-                          : GridView.builder(
-                              padding: const EdgeInsets.all(10.0),
-                              itemCount: folders.folders.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 3 / 2,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
-                              ),
-                              itemBuilder: (ctx, i) {
-                                return ProductItem(folders.folders[i]);
-                              }),
-                      child: Center(
-                        child: Text("No folders added"),
-                      ),
-                    ),
-        ));
+        title: Text("Folders"),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.upload_file),
+          onPressed: () async {
+            var snackBar = await _connectivity(context);
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              Provider.of<Auth>(context, listen: false)
+                  .logout(context: context);
+            },
+          ),
+        ],
+      ),
+      body: FutureBuilder(
+        future:
+            Provider.of<Folders>(context, listen: false).fetchAndSetPlaces(),
+        builder: (ctx, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Consumer<Folders>(
+                builder: (ctx, folders, ch) => folders.folders.length <= 0
+                    ? ch
+                    : GridView.builder(
+                        padding: const EdgeInsets.all(10.0),
+                        itemCount: folders.folders.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3 / 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemBuilder: (ctx, i) {
+                          return ProductItem(folders.folders[i]);
+                        }),
+                child: Center(
+                  child: Text("No folders added"),
+                ),
+              ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () async {
+            await _displayTextInputDialog(context);
+          },
+        ),
+      ),
+    );
   }
 }

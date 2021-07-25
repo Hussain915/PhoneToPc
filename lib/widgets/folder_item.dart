@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shop/colors.dart';
 
 // import '../providers/auth.dart';
 // import '../providers/folders.dart';
 import '../screens/images_screen.dart';
-import '../providers/images.dart';
 
 class ProductItem extends StatelessWidget {
   final String name;
@@ -30,7 +29,14 @@ class ProductItem extends StatelessWidget {
               arguments: name,
             );
           },
-          child: FittedBox(child: Icon(Icons.folder, color: Colors.blue[200],), fit: BoxFit.cover,),
+          child: FittedBox(
+            child: Icon(
+              Icons.folder,
+              color: appBarColor,
+              // color: Colors.blue[200],
+            ),
+            fit: BoxFit.cover,
+          ),
           // child: Hero(
           //   tag: name,
           //   child: FadeInImage(
@@ -47,7 +53,7 @@ class ProductItem extends StatelessWidget {
           //         product.isFavourite ? Icons.favorite : Icons.favorite_border),
           //     onPressed: () async{
           //       try{
-          //         await product.toggleFavouriteStatus(authData.token, authData.userId);  
+          //         await product.toggleFavouriteStatus(authData.token, authData.userId);
           //       } catch (e) {
           //         scaffold.showSnackBar(
           //           SnackBar(content: Text("Marking as favourite failed")),
@@ -65,7 +71,10 @@ class ProductItem extends StatelessWidget {
             textScaleFactor: 1.0,
           ),
           trailing: IconButton(
-            icon: Icon(Icons.delete, color: Colors.black45,),
+            icon: Icon(
+              Icons.delete,
+              color: Colors.black45,
+            ),
             onPressed: () {
               // cart.addItem(product.id, product.price, product.title);
 

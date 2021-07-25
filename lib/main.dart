@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:shop/screens/splash_screen.dart';
 
 // import './screens/product_overview_screen.dart';
 import './screens/folders_screen.dart';
@@ -12,9 +13,7 @@ import './screens/folders_screen.dart';
 // import './screens/orders_screen.dart';
 // import './screens/user_product_screen.dart';
 // import './screens/edit_product_screen.dart';
-import './screens/auth_screen.dart';
 import './providers/auth.dart';
-import './screens/splash_screen.dart';
 import './helpers/custom_route.dart';
 import './screens/images_screen.dart';
 import './screens/image_detail.dart';
@@ -22,7 +21,7 @@ import './screens/image_detail.dart';
 import './providers/places.dart';
 import './providers/folders.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await firebase_core.Firebase.initializeApp();
   runApp(MyApp());
@@ -59,7 +58,6 @@ class MyApp extends StatelessWidget {
               pageTransitionsTheme: PageTransitionsTheme(builders: {
                 TargetPlatform.android: CustomPageTransitionBuilder(),
                 TargetPlatform.iOS: CustomPageTransitionBuilder(),
-
               }),
             ),
             home: auth.isAuth
@@ -70,8 +68,9 @@ class MyApp extends StatelessWidget {
                         authResultSnapshot.connectionState ==
                                 ConnectionState.waiting
                             ? SplashScreen()
-                            : AuthScreen(),
+                            : SplashScreen(),
                   ),
+            // initialRoute:()=> SplashScreen(),
             routes: {
               ImagesScreen.routeName: (ctx) => ImagesScreen(),
               ImageDetailScreen.routeName: (ctx) => ImageDetailScreen(),

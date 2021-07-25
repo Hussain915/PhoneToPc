@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:shop/screens/auth_screen.dart';
 import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
@@ -54,7 +53,7 @@ class Auth with ChangeNotifier {
         ),
       );
       _autoLogout();
-      
+
       final prefs = await SharedPreferences.getInstance();
       print("After prefs $prefs");
       final userData = json.encode(
@@ -85,18 +84,19 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, url);
   }
 
-  Future<bool> tryAutoLogin() async{
+  Future<bool> tryAutoLogin() async {
     var prefs;
-    try{
+    try {
       prefs = await SharedPreferences.getInstance();
-    }catch(e){
+    } catch (e) {
       print(e.toString());
     }
     if (!prefs.containsKey('userData')) {
       print("Does not contain user data");
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
     final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
     if (expiryDate.isBefore(DateTime.now())) {
       print("Date expired");
@@ -110,17 +110,19 @@ class Auth with ChangeNotifier {
     return true;
   }
 
-  Future logout() async {
+  Future logout({context}) async {
     _token = null;
     _userId = null;
     _expiryDate = null;
     _authTimer.cancel();
     _authTimer = null;
 
-    _auth.signOut();
+    await _auth.signOut();
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => AuthScreen()));
   }
 
   void _autoLogout() {
